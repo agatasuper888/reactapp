@@ -56,16 +56,24 @@
     color: orangered;
   }
 
-  .ProgressBar {
-    border: 1px solid orangered;
+  .progress {
+    border: 1px solid black;
     border-radius: 5px;
     height: 25px;
     margin-bottom: 20px;
     padding: 5px;
-  
-> div {
+  }
+  .progress--big {
+    height: 50px;
+  }
+  .progress--color-red {
+border-color: orangered;
+  }
+  .progress__bar {
     height: 100%;
+    background-color: black;
+  }
+
+  .progress--color-red .progress__bar {
     background-color: orangered;
   }
-}
-
