@@ -7,10 +7,12 @@ import Clock from "./Clock";
 import ProgressBar from "./ProgressBar";
 import Timebox from "./Timebox";
 import TimeboxEditor from "./TimeboxEditor";
+import Error from "./Error";
 
 class CurrentTimebox extends React.Component {
     constructor(props) {
         super(props);
+        console.count("constructor")
         this.state = {
             isRunning: false,
             isPaused: false,
@@ -23,6 +25,20 @@ class CurrentTimebox extends React.Component {
         this.handleStart = this.handleStart.bind(this)
         this.handleStop = this.handleStop.bind(this)
         this.togglePause = this.togglePause.bind(this)
+        this.intervalId = null;
+    }
+    componentWillMount() {
+        console.count("componentWillMounth");
+    }
+    componentDidMount() {
+        console.count("componentDidMounth");
+    }
+    componentDidUpdate() {
+        console.count("componentDidUpdate");
+    }
+    componentWillUnmount() {
+        console.count("componentWillUnmount");
+        this.stopTimer();
     }
     handleStart(event) {
         this.setState({
@@ -41,23 +57,29 @@ class CurrentTimebox extends React.Component {
 
     }
     startTimer() {
-        this.intervalId = window.setInterval(
-            () => {
-                this.setState(
-                    (prevState) => ({ elapsedTimeInSeconds: prevState.elapsedTimeInSeconds + 0.1 })
-                )
-            },
-            100
-        )
+        if (this.intervalId === null) {
+            this.intervalId = window.setInterval(
+                () => {
+                    console.log("timer works")
+                    this.setState(
+                        (prevState) => ({ elapsedTimeInSeconds: prevState.elapsedTimeInSeconds + 0.1 })
+                    )
+                },
+                100
+            );
+        }
     }
 
     stopTimer() {
         window.clearInterval(this.intervalId);
+        this.intervalId = null;
 
     }
     togglePause() {
         this.setState(
             function (prevState) {
+                console.count("setState")
+
                 const isPaused = !prevState.isPaused;
                 if (isPaused) {
                     this.stopTimer();
@@ -72,6 +94,8 @@ class CurrentTimebox extends React.Component {
         )
     }
     render() {
+        console.count("render")
+
         const { isPaused, isRunning, pausesCount, elapsedTimeInSeconds } = this.state;
         const { title, totalTimeInMinutes, isEditable, onEdit } = this.props;
         const totalTimeInSeconds = totalTimeInMinutes * 60;
@@ -120,20 +144,25 @@ class EditableTimebox extends React.Component {
         const { title, totalTimeInMinutes, isEditable } = this.state;
         return (
             <>
-                <TimeboxEditor
-                    title={title}
-                    totalTimeInMinutes={totalTimeInMinutes}
-                    isEditable={isEditable}
-                    onConfirm={this.handleConfirm}
-                    onTitleChange={this.handleTitleChange}
-                    onTotalTimeInMinutesChange={this.handleTotalTimeInMinutesChange}
-                />
-                <CurrentTimebox
-                    isEditable={isEditable}
-                    title={title}
-                    totalTimeInMinutes={totalTimeInMinutes}
-                    onEdit={this.handleEdit}
-                />
+                <React.StrictMode>
+                    {isEditable ? (
+                        <TimeboxEditor
+                            title={title}
+                            totalTimeInMinutes={totalTimeInMinutes}
+                            isEditable={isEditable}
+                            onConfirm={this.handleConfirm}
+                            onTitleChange={this.handleTitleChange}
+                            onTotalTimeInMinutesChange={this.handleTotalTimeInMinutesChange}
+                        />
+                    ) : (
+                            <CurrentTimebox
+                                isEditable={isEditable}
+                                title={title}
+                                totalTimeInMinutes={totalTimeInMinutes}
+                                onEdit={this.handleEdit}
+                            />
+                        )}
+                </React.StrictMode>
             </>
         )
     }
@@ -184,14 +213,17 @@ class TimeboxCreator extends React.Component {
         )
     }
 }
+
 class TimeboxList extends React.Component {
     state = {
         timeboxes: [
             { id: "a", title: "Uczę się list", totalTimeInMinutes: 25 },
             { id: "b", title: "Uczę się formularzy", totalTimeInMinutes: 15 },
             { id: "c", title: "Uczę się żyć", totalTimeInMinutes: 5 },
-        ]
+        ],
+        hasError: false
     }
+
     addTimebox = (timebox) => {
         this.setState(prevState => {
             const timeboxes = [timebox, ...prevState.timeboxes];
@@ -219,14 +251,16 @@ class TimeboxList extends React.Component {
         return (
             <>
                 <TimeboxCreator onCreate={this.handleCreate} />
-                {this.state.timeboxes.map((timebox, index) => (
-                    <Timebox
-                        key={timebox.id}
-                        title={timebox.title} totalTimeInMinutes={timebox.totalTimeInMinutes}
-                        onDelete={() => this.removeTimebox(index)}
-                        onEdit={() => this.updateTimebox(index, { ...timebox, title: "Updated timebox" })}
-                    />
-                ))}
+                <Error message="Coś się wykrzaczyło :(">
+                    {this.state.timeboxes.map((timebox, index) => (
+                        <Timebox
+                            key={timebox.id}
+                            title={timebox.title} totalTimeInMinutes={timebox.totalTimeInMinutes}
+                            onDelete={() => this.removeTimebox(index)}
+                            onEdit={() => this.updateTimebox(index, { ...timebox, title: "Updated timebox" })}
+                        />
+                    ))}
+                </Error>
             </>
         )
 
