@@ -7,7 +7,7 @@ import Clock from "./Clock";
 import ProgressBar from "./ProgressBar";
 import Timebox from "./Timebox";
 import TimeboxEditor from "./TimeboxEditor";
-import Error from "./Error";
+import Error from "./ErrorBoundary";
 
 class CurrentTimebox extends React.Component {
     constructor(props) {
