@@ -1,4 +1,5 @@
 import React from "react";
+
 function Timebox({ title, totalTimeInMinutes, onDelete, onEdit }) {
     if (totalTimeInMinutes <= 0) {
         throw new Error("Całkowity czas musi być większy niż zero")
