@@ -17,4 +17,4 @@ function ProgressBar({ className = "", percent = 33, big = false, color = null }
         </div>
     );
 }
-export default ProgressBar 
+export default ProgressBar; 
