@@ -1,12 +1,12 @@
-
+const BASE_URL = "http://localhost:4000/timeboxes"
 const FetchTimeboxesAPI = {
     getAllTimeboxes: async function () {
-        const response = await makeRequest(`http://localhost:4000/timeboxes`, "GET")
+        const response = await makeRequest(`${BASE_URL}`, "GET")
         const timeboxes = await response.json();
         return timeboxes;
     },
     addTimebox: async function (timeboxToAdd) {
-        const response = await makeRequest(`http://localhost:4000/timeboxes`, "POST", timeboxToAdd)
+        const response = await makeRequest(`${BASE_URL}`, "POST", timeboxToAdd)
         const addedTimebox = await response.json();
         return addedTimebox;
     },
@@ -15,7 +15,7 @@ const FetchTimeboxesAPI = {
         if (!timeboxToReplace.id) {
             throw new Error("Timebox has to have an id to be updated")
         }
-        const response = await makeRequest(`http://localhost:4000/timeboxes/${timeboxToReplace.id}`, "PUT", timeboxToReplace)
+        const response = await makeRequest(`${BASE_URL}/${timeboxToReplace.id}`, "PUT", timeboxToReplace)
         const replacedTimebox = await response.json();
         return replacedTimebox;
     },
@@ -23,7 +23,7 @@ const FetchTimeboxesAPI = {
         if (!timeboxToRemove.id) {
             throw new Error("Timebox has to have an id to be deleted")
         }
-        await makeRequest(`http://localhost:4000/timeboxes/${timeboxToRemove.id}`, "DELETE")
+        await makeRequest(`${BASE_URL}/${timeboxToRemove.id}`, "DELETE")
     }
 }
 
